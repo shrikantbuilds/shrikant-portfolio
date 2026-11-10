@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal portfolio
 
-## Getting Started
+A multi-page software developer portfolio with a fixed sidebar, dark navy UI, and live content from Supabase. Edit everything at `/admin`. Host on Netlify Free.
 
-First, run the development server:
+Seed SQL and preview fallbacks use **dummy** placeholder content. Replace it in Admin after setup.
+
+No credit card. The free subdomain is `your-site.netlify.app`.
+
+## Run it locally
+
+Use Node 22.
 
 ```bash
+cp .env.example .env.local
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Without Supabase keys the site shows starter copy and a preview banner. Admin explains what is missing.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 1. Supabase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Open the SQL editor and run [supabase/migrations/20261110120000_init.sql](supabase/migrations/20261110120000_init.sql).
+3. Authentication → Providers → Email. Enable magic link / OTP. After your first login, turn **off** “Allow new users to sign up”.
+4. Authentication → URL configuration. Add `http://localhost:3000/admin` and, later, `https://your-site.netlify.app/admin` as redirect URLs.
+5. Project Settings → API. Copy the project URL and the `anon` / publishable key into `.env.local`.
 
-## Learn More
+Do not copy the service role key into this app. The anon key is enough. Row Level Security blocks writes from everyone except the admin.
 
-To learn more about Next.js, take a look at the following resources:
+Admin login is email-link only. The first account that opens the link claims the empty `admins` table.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 2. Web3Forms
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create a free access key at [web3forms.com](https://web3forms.com) and set `NEXT_PUBLIC_WEB3FORMS_KEY`. The key is meant to be public.
 
-## Deploy on Vercel
+## 3. GitHub stats
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set `GITHUB_USERNAME` to your public GitHub username. `/api/github-stats` reads the public profile and caches it for an hour. No token.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 4. Netlify
+
+1. Push the repo to GitHub.
+2. New site from Git → this repo. Netlify detects Next.js. [netlify.toml](netlify.toml) pins Node 22.
+3. Site settings → Environment variables. Add the same four values as `.env.local`.
+4. Deploy. Open `/admin` on the live URL and sign in.
+
+Public pages are cached for about 60 seconds, so a save shows up on the next refresh cycle and a quiet site does not spend the free credit allowance on every visit. If the credits run out, Netlify pauses the site until the next month. It does not charge you.
+
+## 5. Keep the database awake
+
+Free Supabase projects pause after about a week with almost no queries. [.github/workflows/keepalive.yml](.github/workflows/keepalive.yml) reads the settings row twice a week.
+
+Add repository secrets:
+
+- `SUPABASE_URL` — the same project URL
+- `SUPABASE_ANON_KEY` — the anon key
+
+## What you can edit
+
+Settings, about, resume PDF, projects, system designs, experience, skills, and blog posts. Images and the PDF go to the public `media` storage bucket. Only the admin can upload. Visitors can read published rows and those files.

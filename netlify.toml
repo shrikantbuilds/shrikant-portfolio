@@ -1,0 +1,6 @@
+# Netlify detects Next.js on its own. Node 22 matches the Tailwind 4 and Next 15 engines.
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
