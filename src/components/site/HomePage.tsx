@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { EditIconButton, EditToolbar } from "@/components/edit/EditControls";
+import { SettingsEditor } from "@/components/edit/editors";
 import { HomePortraitOrbit } from "@/components/site/HomePortraitOrbit";
 import { mediaUrl } from "@/lib/media";
 import type { DesktopBundle } from "@/lib/types";
@@ -15,9 +20,14 @@ export function HomePage({ bundle }: { bundle: DesktopBundle }) {
   const photo = mediaUrl(settings.photo_path);
   const { first, last } = splitName(settings.name || "Alex Rivera");
   const role = settings.role_line || "Software Developer";
+  const [editing, setEditing] = useState(false);
 
   return (
     <section className="home-hero">
+      <EditToolbar title="Home">
+        <EditIconButton label="Edit profile" kind="edit" onClick={() => setEditing(true)} />
+      </EditToolbar>
+
       <div className="home-hero-grid">
         <div className="home-copy">
           <p className="home-hi">Hi, I&apos;m</p>
@@ -58,6 +68,8 @@ export function HomePage({ bundle }: { bundle: DesktopBundle }) {
 
         <HomePortraitOrbit photoUrl={photo} name={settings.name} />
       </div>
+
+      <SettingsEditor open={editing} onClose={() => setEditing(false)} settings={settings} mode="home" />
     </section>
   );
 }

@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { EditIconButton, EditToolbar } from "@/components/edit/EditControls";
+import { SkillEditor } from "@/components/edit/editors";
 import { TechIcon } from "@/components/site/TechIcon";
 import { resolveTech, SKILL_GROUPS } from "@/lib/tech";
 import type { Project, Skill } from "@/lib/types";
@@ -11,9 +16,14 @@ export function SkillsShowcase({
   projects: Project[];
 }) {
   const byName = new Map(skills.map((skill) => [skill.name.toLowerCase(), skill]));
+  const [editing, setEditing] = useState<Skill | null | undefined>(undefined);
 
   return (
     <div className="skills-page">
+      <EditToolbar title="Skills">
+        <EditIconButton label="Add skill" kind="add" onClick={() => setEditing(null)} />
+      </EditToolbar>
+
       <header className="panel panel-pad">
         <p className="page-kicker">Skills</p>
         <h1 className="page-title">Technologies I work with</h1>
@@ -32,6 +42,11 @@ export function SkillsShowcase({
                 const tech = resolveTech(item);
                 return (
                   <article key={item} className="skills-tile">
+                    {skill ? (
+                      <div className="inline-edit-card-actions">
+                        <EditIconButton label="Edit skill" kind="edit" onClick={() => setEditing(skill)} />
+                      </div>
+                    ) : null}
                     <div className="skills-tile-top">
                       <span className="skills-tile-logo">
                         <TechIcon label={item} size={22} />
@@ -58,6 +73,34 @@ export function SkillsShowcase({
           </section>
         ))}
       </div>
+
+      {skills.length > 0 ? (
+        <section className="panel panel-pad">
+          <h2 className="about-section-title">Saved skills</h2>
+          <div className="skills-tile-grid">
+            {skills.map((skill) => (
+              <article key={skill.id} className="skills-tile">
+                <div className="inline-edit-card-actions">
+                  <EditIconButton label="Edit skill" kind="edit" onClick={() => setEditing(skill)} />
+                </div>
+                <div className="skills-tile-top">
+                  <span className="skills-tile-logo">
+                    <TechIcon label={skill.name} size={22} />
+                  </span>
+                  <h3>{skill.name}</h3>
+                </div>
+                {skill.usage ? <p className="muted">{skill.usage}</p> : null}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <SkillEditor
+        open={editing !== undefined}
+        onClose={() => setEditing(undefined)}
+        initial={editing === undefined ? null : editing}
+      />
     </div>
   );
 }
