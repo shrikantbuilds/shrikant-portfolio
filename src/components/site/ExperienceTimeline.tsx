@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { EditIconButton, EditToolbar } from "@/components/edit/EditControls";
+import { ExperienceEditor } from "@/components/edit/editors";
 import { TechLogo } from "@/components/site/TechLogo";
 import type { ExperienceItem } from "@/lib/types";
 
@@ -38,9 +43,14 @@ function orgInitials(org: string) {
 export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
   const work = items.filter((item) => !isEducation(item));
   const education = items.filter((item) => isEducation(item));
+  const [editing, setEditing] = useState<ExperienceItem | null | undefined>(undefined);
 
   return (
     <div className="exp-page">
+      <EditToolbar title="Experience">
+        <EditIconButton label="Add experience" kind="add" onClick={() => setEditing(null)} />
+      </EditToolbar>
+
       <header className="exp-banner exp-banner-simple">
         <div className="exp-banner-copy">
           <p className="exp-pill">Experience</p>
@@ -53,7 +63,7 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
         <section className="exp-section">
           <div className="exp-rail">
             {work.map((item, index) => (
-              <WorkCard key={item.id} item={item} index={index} />
+              <WorkCard key={item.id} item={item} index={index} onEdit={() => setEditing(item)} />
             ))}
           </div>
         </section>
@@ -67,18 +77,32 @@ export function ExperienceTimeline({ items }: { items: ExperienceItem[] }) {
           </div>
           <div className="exp-edu-list">
             {education.map((item) => (
-              <EducationCard key={item.id} item={item} />
+              <EducationCard key={item.id} item={item} onEdit={() => setEditing(item)} />
             ))}
           </div>
         </section>
       ) : null}
 
       {items.length === 0 ? <p className="muted panel panel-pad">No published experience yet.</p> : null}
+
+      <ExperienceEditor
+        open={editing !== undefined}
+        onClose={() => setEditing(undefined)}
+        initial={editing === undefined ? null : editing}
+      />
     </div>
   );
 }
 
-function WorkCard({ item, index }: { item: ExperienceItem; index: number }) {
+function WorkCard({
+  item,
+  index,
+  onEdit,
+}: {
+  item: ExperienceItem;
+  index: number;
+  onEdit: () => void;
+}) {
   const current = isCurrent(item);
   const tech = techFor(item);
   const points = bullets(item.summary);
@@ -89,6 +113,9 @@ function WorkCard({ item, index }: { item: ExperienceItem; index: number }) {
         {String(index + 1).padStart(2, "0")}
       </div>
       <div className="exp-work-card exp-work-card-plain">
+        <div className="inline-edit-card-actions">
+          <EditIconButton label="Edit experience" kind="edit" onClick={onEdit} />
+        </div>
         <div className="exp-work-main">
           <div className="exp-work-head">
             <div className="exp-org-badge" aria-hidden="true">
@@ -137,12 +164,15 @@ function WorkCard({ item, index }: { item: ExperienceItem; index: number }) {
   );
 }
 
-function EducationCard({ item }: { item: ExperienceItem }) {
+function EducationCard({ item, onEdit }: { item: ExperienceItem; onEdit: () => void }) {
   const major = item.role_title.replace(/^b\.?e\.?\s*(in)?\s*/i, "").trim() || "Computer Engineering";
   const degree = /b\.?e\.?/i.test(item.role_title) ? "Bachelor of Engineering (B.E.)" : item.role_title;
 
   return (
     <article className="exp-edu-card">
+      <div className="inline-edit-card-actions">
+        <EditIconButton label="Edit education" kind="edit" onClick={onEdit} />
+      </div>
       <div className="exp-edu-copy">
         <h3>{degree}</h3>
         <p className="exp-org">{major}</p>

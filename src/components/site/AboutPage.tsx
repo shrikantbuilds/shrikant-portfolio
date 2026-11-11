@@ -1,4 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import { MarkdownView } from "@/components/MarkdownView";
+import { EditIconButton, EditToolbar } from "@/components/edit/EditControls";
+import { AboutEditor } from "@/components/edit/editors";
 import { Reveal } from "@/components/site/Reveal";
 import { mediaUrl } from "@/lib/media";
 import type { DesktopBundle } from "@/lib/types";
@@ -6,7 +11,8 @@ import type { DesktopBundle } from "@/lib/types";
 export function AboutPage({ bundle }: { bundle: DesktopBundle }) {
   const { settings } = bundle;
   const photo = mediaUrl(settings.photo_path);
-  const initials = (settings.name || "SS")
+  const [editing, setEditing] = useState(false);
+  const initials = (settings.name || "AR")
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
@@ -16,6 +22,10 @@ export function AboutPage({ bundle }: { bundle: DesktopBundle }) {
   return (
     <Reveal>
       <section className="about-page">
+        <EditToolbar title="About">
+          <EditIconButton label="Edit about" kind="edit" onClick={() => setEditing(true)} />
+        </EditToolbar>
+
         <header className="panel panel-pad about-hero">
           <p className="page-kicker">About Me</p>
           <div className="about-layout">
@@ -26,8 +36,8 @@ export function AboutPage({ bundle }: { bundle: DesktopBundle }) {
                 <img src={photo} alt={settings.name} className="about-photo" />
               ) : (
                 <div className="about-photo about-photo-empty" role="img" aria-label="Photo placeholder">
-                  <span className="about-photo-initials">{initials || "SS"}</span>
-                  <span className="about-photo-hint">Add your photo in Admin / About</span>
+                  <span className="about-photo-initials">{initials || "AR"}</span>
+                  <span className="about-photo-hint">Add your photo with Edit</span>
                 </div>
               )}
             </div>
@@ -63,6 +73,8 @@ export function AboutPage({ bundle }: { bundle: DesktopBundle }) {
             </div>
           ) : null}
         </div>
+
+        <AboutEditor open={editing} onClose={() => setEditing(false)} settings={settings} />
       </section>
     </Reveal>
   );

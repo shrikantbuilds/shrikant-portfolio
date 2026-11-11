@@ -2080,6 +2080,146 @@ iframe {
   }
 }
 
+/* —— Inline edit mode —— */
+.admin-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  padding: 0.55rem 1rem;
+  background: #16325a;
+  border-bottom: 1px solid rgba(88, 166, 255, 0.35);
+  color: #e8f1ff;
+  font-size: 0.86rem;
+}
+
+.admin-bar-hint {
+  color: #9eb6d6;
+}
+
+.admin-bar .os-text-button {
+  color: #cfe0ff;
+}
+
+.inline-edit-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+}
+
+.inline-edit-toolbar-title {
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.inline-edit-toolbar-actions,
+.inline-edit-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.inline-edit-card-actions {
+  justify-content: flex-end;
+  margin-bottom: 0.45rem;
+}
+
+.inline-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(88, 166, 255, 0.35);
+  background: rgba(88, 166, 255, 0.12);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.inline-edit-btn-add {
+  border-color: rgba(61, 220, 151, 0.4);
+  background: rgba(61, 220, 151, 0.12);
+  color: #7dffc2;
+}
+
+.inline-edit-btn-delete {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+}
+
+.project-card-wrap,
+.blog-item-wrap,
+.exp-work-card,
+.exp-edu-card,
+.skills-tile {
+  position: relative;
+}
+
+.edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(2, 8, 16, 0.62);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.edit-modal-panel {
+  width: min(40rem, 100%);
+  max-height: min(88dvh, 52rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.1rem;
+  border: 1px solid var(--line);
+  background: #101e32;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.edit-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.edit-modal-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.edit-modal-body {
+  padding: 1rem;
+  overflow: auto;
+}
+
+.edit-modal-foot {
+  padding: 0.85rem 1rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
